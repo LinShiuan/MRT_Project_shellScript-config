@@ -1,0 +1,17 @@
+#!/bin/bash
+
+for u in voe ian eleen holden bobo andy
+do
+  cat /etc/passwd | grep $u &>/dev/null
+  [ "$?" == "0" ] && echo "$u exist" && continue
+  sudo useradd -s /bin/bash -m $u &>/dev/null
+  [ "$?" == "0" ] && echo "$u created"
+  echo -e "123456\n123456" | sudo passwd $u
+  [ "$?" == "0" ] && echo "$u passwd ok"  
+# hdfs
+  hdfs dfs -ls /user | grep $u &>/dev/null
+  [ "$?" == "0" ] && echo "$u exist in hdfs" && continue
+  hdfs dfs -mkdir -p /user/$u
+  hdfs dfs -chown $u:$u /user/$u
+  [ "$?" == "0" ] && echo "$u created and permission changed"
+done

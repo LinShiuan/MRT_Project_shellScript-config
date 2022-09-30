@@ -1,0 +1,67 @@
+#!/bin/bash
+
+config_dir="/home/bigboss/vmusdt/hdp33/conf/hadoop-3.3.3"
+hdfs="$config_dir/hdfs-site.xml"
+core="$config_dir/core-site.xml"
+mapred="$config_dir/mapred-site.xml"
+yarn="$config_dir/yarn-site.xml"
+
+# hadoop configuration
+
+echo "Check for the configurations below :"
+echo "$hdfs"
+echo "$core"
+echo "$mapred"
+echo "$yarn"
+
+core_config=$(cat $core | grep -A 1 "<name>fs.defaultFS</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+hdfs_config=$(cat $hdfs | grep -A 1 "<name>dfs.replication</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+namenode=$(cat $hdfs | grep -A 1 "<name>dfs.namenode.name.dir</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+datanode=$(cat $hdfs | grep -A 1 "<name>dfs.datanode.data.dir</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+superuser=$(cat $hdfs | grep -A 1 "<name>dfs.permissions.superusergroup</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+ResouceManager=$(cat $yarn | grep -A 1 "<name>yarn.resourcemanager.hostname</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+ 
+NodeManager_memory=$(cat $yarn | grep -A 1 "<name>yarn.nodemanager.resource.memory-mb</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+NodeManager_cores=$(cat $yarn | grep -A 1 "<name>yarn.nodemanager.resource.cpu-vcores</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+EachContainer_min_mem=$(cat $yarn | grep -A 1 "<name>yarn.scheduler.minimum-allocation-mb</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+EachContainer_Max_mem=$(cat $yarn | grep -A 1 "<name>yarn.scheduler.maximum-allocation-mb</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+EachContainer_min_cores=$(cat $yarn | grep -A 1 "<name>yarn.scheduler.minimum-allocation-vcores</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+EachContainer_Max_cores=$(cat $yarn | grep -A 1 "<name>yarn.scheduler.maximum-allocation-vcores</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+Reduce_mem_mapreduce=$(cat $mapred | grep -A 1 "<name>mapreduce.reduce.memory.mb</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+Reduce_java_opts_mapreduce=$(cat $mapred | grep -A 1 "<name>mapreduce.reduce.java.opts</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+Map_mem_mapreduce=$(cat $mapred | grep -A 1 "<name>mapreduce.map.memory.mb</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+Map_java_opts_mapreduce=$(cat $mapred | grep -A 1 "<name>mapreduce.map.java.opts</name>" | grep -oP "(?<=<value>).+(?=</value>)")
+
+
+echo "Configuration from core-site.xml / hdfs-site.xml : "
+echo "default FS : $core_config"
+echo "Replication : $hdfs_config"
+echo "NameNode : $namenode"
+echo "DataNode : $datanode"
+echo "Superuser : $superuser"
+
+echo "=================================================================="
+echo "Configuration from yarn-site.xml :"
+echo "ResouceManager : $ResouceManager"
+echo "NodeManager -"
+echo "	memory : $NodeManager_memory"
+echo "	core : $NodeManager_cores"
+echo "Each Container -"
+echo "	min memory : $EachContainer_min_mem"
+echo "	Max memory : $EachContainer_Max_mem"
+echo "	min core : $EachContainer_min_cores"
+echo "	Max core : $EachContainer_Max_cores"
+
+echo "=================================================================="
+echo "Configuration from mapred-site.xml"
+echo "Reduce - "
+echo "	memory : $Reduce_mem_mapreduce"
+echo "	java opts : $Reduce_java_opts_mapreduce"
+echo "Map -"
+echo "	memory : $Map_mem_mapreduce"
+echo "	java opts : $Map_java_opts_mapreduce"

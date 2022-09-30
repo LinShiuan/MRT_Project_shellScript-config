@@ -1,0 +1,17 @@
+#!/bin/bash
+w=$(cat /etc/hosts | grep 'dt' | cut -d' ' -f2 | sort -nr)
+# w = hostname
+
+for i in $w
+do
+   hls &>/dev/null
+   if [ "$?" == "1" ]; then 
+     ssh $i sudo reboot
+     if [ "$?" == "0" ]; then
+       echo -e "$i reboot \n"
+     fi
+   else
+     stopyarn && stophdfs
+     [ "$?" == "0" ]&&ssh $i sudo reboot
+   fi
+done 
