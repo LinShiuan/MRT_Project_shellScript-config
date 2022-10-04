@@ -3,4 +3,4 @@
 2. ubuntu 22.04 bash settings
 3. hadoop version 3.3.3 environment settings
 4. ubuntu version 22.04 shell script for linux and hadoop working
-5. spark version 3.3.0 working environment settings
+5. spark version 3.3.0 working environment settings (Spark on Yarn)
